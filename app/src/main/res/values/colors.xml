@@ -149,4 +149,5 @@
     <color name="darkblue">#00008b</color> <!-- 暗蓝色 -->
     <color name="navy">#000080</color> <!-- 海军色 -->
     <color name="black">#000000</color> <!-- 黑色 -->
+    <color name="separator_color">#1E88E5</color>
 </resources>
