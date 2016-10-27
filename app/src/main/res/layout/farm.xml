@@ -34,7 +34,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/quarter_screen"
         android:text="i am a tip"
-        android:id="@+id/farm_tips_textview"/>
+        android:id="@+id/farm_tips_textview"
+        android:scrollbars="vertical"
+        android:singleLine="false"/>
 
     <View
         android:layout_width="match_parent"

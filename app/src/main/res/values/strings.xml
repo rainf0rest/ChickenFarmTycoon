@@ -3,4 +3,5 @@
     <string name="diaTest_name">test</string>
     <string name="money">金币：</string>
     <string name="day">天数：</string>
+    <string name="operate">操作</string>
 </resources>
