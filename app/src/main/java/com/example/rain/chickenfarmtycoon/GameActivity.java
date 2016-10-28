@@ -1,6 +1,7 @@
 package com.example.rain.chickenfarmtycoon;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,13 +24,15 @@ import java.util.TimerTask;
  */
 public class GameActivity extends Activity {
 
-    private TextView tipTextView, farmDaysTextView;
+    private TextView tipTextView, farmDaysTextView, farmMoneyTextView;
     private ListView farmListView;
     private ArrayList<Chicken> chickens;
     private Handler farmTimeHandler;
     private Timer timer;
     private TimerTask task;
-    private int days;
+    private int days, money;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +43,24 @@ public class GameActivity extends Activity {
         tipTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         farmDaysTextView = (TextView) findViewById(R.id.farm_days_textview);
+        farmMoneyTextView = (TextView) findViewById(R.id.farm_money_textview);
 
         farmListView = (ListView) findViewById(R.id.farm_listView);
 
         chickens = new ArrayList<Chicken>();
         initChickenData();
 
-        //天数读档or初始化
-        days = 0;
+
+        //天数,金钱读档or初始化
+        sharedPreferences = getSharedPreferences("Testdata", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        days = sharedPreferences.getInt("FarmTime", 0);
+        money = sharedPreferences.getInt("FarmMoney", 100);
+        //days = 0;
         farmDaysTextView.setText("天数：" + days);
+        farmMoneyTextView.setText("金币：" + money);
+
 
         List<Map<String, Object>> listItems = new ArrayList<Map<String, Object>>();
         for(int i = 0; i < chickens.size(); i++) {
@@ -75,6 +87,8 @@ public class GameActivity extends Activity {
                         // do some action
                         days++;
                         farmDaysTextView.setText("天数：" + days);
+                        editor.putInt("FarmTime", days);
+                        editor.commit();
                         break;
                     default:
                         break;
