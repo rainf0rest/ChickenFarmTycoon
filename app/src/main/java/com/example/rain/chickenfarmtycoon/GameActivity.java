@@ -1,15 +1,23 @@
 package com.example.rain.chickenfarmtycoon;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -114,6 +122,7 @@ public class GameActivity extends Activity {
         }
 
 
+
         List<Map<String, Object>> listItems = new ArrayList<Map<String, Object>>();
         for(int i = 0; i < eggs.size(); i++) {
             Map<String, Object> listItem = new HashMap<String, Object>();
@@ -137,6 +146,55 @@ public class GameActivity extends Activity {
                 new int[] {R.id.farm_chicken_name, R.id.farm_chicken_tips});
 
         farmListView.setAdapter(simpleAdapter);
+
+        farmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Toast.makeText(GameActivity.this, "position: " + position, Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
+        /*
+        BaseAdapter baseAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return eggs.size();
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return null;
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(final int position, View convertView, ViewGroup parent) {
+
+                if(convertView == null) {
+                    convertView = LayoutInflater.from(GameActivity.this).inflate(R.layout.farm_list_item, null);
+                    Button button = (Button) convertView.findViewById(R.id.farm_chicken_operate);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(GameActivity.this, "position: " + position, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+
+                convertView.setTag(R.id.farm_chicken_operate, position);
+                return null;
+            }
+        };
+
+        farmListView.setAdapter(baseAdapter);*/
 
         farmTimeHandler = new Handler(){
             @Override
