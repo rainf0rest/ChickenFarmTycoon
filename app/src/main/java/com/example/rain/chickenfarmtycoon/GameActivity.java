@@ -11,6 +11,11 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +32,11 @@ public class GameActivity extends Activity {
     private TextView tipTextView, farmDaysTextView, farmMoneyTextView;
     private ListView farmListView;
     private ArrayList<Chicken> chickens;
+    private ArrayList<Egg> eggs;
     private Handler farmTimeHandler;
     private Timer timer;
     private TimerTask task;
-    private int days, money;
+    private int days, money, firstPlay;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
@@ -47,8 +53,11 @@ public class GameActivity extends Activity {
 
         farmListView = (ListView) findViewById(R.id.farm_listView);
 
+        chickens = new ArrayList<>();
+        eggs = new ArrayList<>();
+
         chickens = new ArrayList<Chicken>();
-        initChickenData();
+        //initChickenData();
 
 
         //天数,金钱读档or初始化
@@ -57,18 +66,69 @@ public class GameActivity extends Activity {
 
         days = sharedPreferences.getInt("FarmTime", 0);
         money = sharedPreferences.getInt("FarmMoney", 100);
+        firstPlay = sharedPreferences.getInt("firstPlay", 0);
         //days = 0;
         farmDaysTextView.setText("天数：" + days);
         farmMoneyTextView.setText("金币：" + money);
 
+        //蛋与鸡  读档
+        String eggsString = sharedPreferences.getString("eggs", null);
+        String chickensString = sharedPreferences.getString("chickens", null);
+
+        if(eggsString != null) {
+            //egg read data
+            try {
+                try {
+                    ArrayList<Egg> eg = deSerializationEggs(eggsString);
+                    eggs = eg;
+                }
+                catch (ClassNotFoundException ex) {
+
+                }
+
+            }
+            catch (IOException e) {
+
+            }
+        }
+        if(chickensString != null) {
+            //chicken read data
+            try {
+                try {
+                    ArrayList<Chicken> eg = deSerializationChickens(chickensString);
+                    chickens = eg;
+                }
+                catch (ClassNotFoundException ex) {
+
+                }
+
+            }
+            catch (IOException e) {
+
+            }
+        }
+
+
+        if(firstPlay == 0) {
+            initData();
+        }
+
 
         List<Map<String, Object>> listItems = new ArrayList<Map<String, Object>>();
+        for(int i = 0; i < eggs.size(); i++) {
+            Map<String, Object> listItem = new HashMap<String, Object>();
+            listItem.put("name", eggs.get(i).getName());
+            listItem.put("detail", "" + eggs.get(i).getLevel());
+            listItems.add(listItem);
+        }
+
         for(int i = 0; i < chickens.size(); i++) {
             Map<String, Object> listItem = new HashMap<String, Object>();
             listItem.put("name", chickens.get(i).getName());
-            listItem.put("detail", chickens.get(i).getNumber());
+            listItem.put("detail", "" + chickens.get(i).getLevel());
             listItems.add(listItem);
         }
+
 
         SimpleAdapter simpleAdapter = new SimpleAdapter(this,
                 listItems,
@@ -114,19 +174,85 @@ public class GameActivity extends Activity {
         timer.schedule(task, 1000, 10000);
     }
 
-    private void initChickenData() {
-        initChickenData1(1, 100);
-        initChickenData1(2, 30);
-        initChickenData1(3, 10);
+    private void initData() {
+        initChickenData1(1);
+        initChickenData1(1);
+        initChickenData1(1);
     }
 
-    private void initChickenData1(int kind, int num) {
-        Chicken chicken = new Chicken();
-        chicken.setKind(kind);
-        chicken.makeName();
-        chicken.setNumber(num);
-        //tipTextView.append("\n" + chicken.getName() + " num:" + chicken.getNumber());
-        chickens.add(chicken);
+    private void initChickenData1(int level) {
+        Egg eg = new Egg(level);
+        eggs.add(eg);
     }
+
+
+    //序列化对象
+
+    private String serializeEggs() throws IOException {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                byteArrayOutputStream);
+        //eggs
+        objectOutputStream.writeObject(eggs);
+        String serStr = byteArrayOutputStream.toString("ISO-8859-1");
+        serStr = java.net.URLEncoder.encode(serStr, "UTF-8");
+        objectOutputStream.close();
+        byteArrayOutputStream.close();
+        return serStr;
+    }
+
+    //序列化对象
+
+    private String serializeChickens() throws IOException {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                byteArrayOutputStream);
+        //eggs
+        objectOutputStream.writeObject(chickens);
+        String serStr = byteArrayOutputStream.toString("ISO-8859-1");
+        serStr = java.net.URLEncoder.encode(serStr, "UTF-8");
+        objectOutputStream.close();
+        byteArrayOutputStream.close();
+        return serStr;
+    }
+
+    //反序列化对象
+
+    private ArrayList<Egg> deSerializationEggs(String str) throws IOException,
+            ClassNotFoundException {
+
+        String redStr = java.net.URLDecoder.decode(str, "UTF-8");
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                redStr.getBytes("ISO-8859-1"));
+        ObjectInputStream objectInputStream = new ObjectInputStream(
+                byteArrayInputStream);
+
+        ArrayList<Egg> p = (ArrayList<Egg>) objectInputStream.readObject();
+
+        objectInputStream.close();
+        byteArrayInputStream.close();
+        return p;
+    }
+
+    //反序列化对象
+
+    private ArrayList<Chicken> deSerializationChickens(String str) throws IOException,
+            ClassNotFoundException {
+
+        String redStr = java.net.URLDecoder.decode(str, "UTF-8");
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                redStr.getBytes("ISO-8859-1"));
+        ObjectInputStream objectInputStream = new ObjectInputStream(
+                byteArrayInputStream);
+
+        ArrayList<Chicken> p = (ArrayList<Chicken>) objectInputStream.readObject();
+
+        objectInputStream.close();
+        byteArrayInputStream.close();
+        return p;
+    }
+
 
 }

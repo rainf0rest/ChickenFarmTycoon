@@ -1,25 +1,32 @@
 package com.example.rain.chickenfarmtycoon;
 
+import java.io.Serializable;
+
 /**
  * Created by rain on 2016/10/15.
  */
-public class Chicken {
-    private int kind;//male and female or egg
-    //private int health;
-    //private int age;
+public class Chicken implements Serializable{
     private String name;
-    private int number;
+    private int level;
+    private int weight;
+    private boolean hen;
+    private int price;
 
-    public Chicken() {
+    public Chicken(int level) {
+        RandomHelper randomHelper = new RandomHelper();
+        if(randomHelper.makeRandom(1,2) == 1) {
+            this.hen = true;
+            this.name = "母鸡";
+        }
+        else {
+            this.hen = false;
+            this.name = "公鸡";
+        }
 
-    }
+        this.level = level;
+        this.weight = 0;
+        this.price = 0;
 
-    public int getKind() {
-        return kind;
-    }
-
-    public void setKind(int kind) {
-        this.kind = kind;
     }
 
     public String getName() {
@@ -30,28 +37,35 @@ public class Chicken {
         this.name = name;
     }
 
-    public int getNumber() {
-        return number;
+    public int getLevel() {
+        return level;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public void setLevel(int level) {
+        this.level = level;
     }
 
-    public void makeName() {
-        switch (kind) {
-            case 1:
-                name = "蛋";
-                break;
-            case 2:
-                name = "母鸡";
-                break;
-            case 3:
-                name = "公鸡";
-                break;
-            default:
-                name = "异种";
-                break;
-        }
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public boolean isHen() {
+        return hen;
+    }
+
+    public void setHen(boolean hen) {
+        this.hen = hen;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }
