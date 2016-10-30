@@ -13,6 +13,7 @@ public class Egg implements Serializable {
     private int level;
 
     private int bornTime;
+    private boolean born;
 
     private int price;
 
@@ -21,6 +22,7 @@ public class Egg implements Serializable {
         this.level = level;
         bornTime = 10* level;
         price = 1* level;
+        born = false;
     }
 
     public String getName() {
@@ -45,6 +47,14 @@ public class Egg implements Serializable {
 
     public void setBornTime(int bornTime) {
         this.bornTime = bornTime;
+    }
+
+    public boolean isBorn() {
+        return born;
+    }
+
+    public void setBorn(boolean born) {
+        this.born = born;
     }
 
     public boolean decBornTime() {

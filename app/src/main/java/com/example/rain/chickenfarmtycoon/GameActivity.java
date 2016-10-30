@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
@@ -39,7 +40,7 @@ import java.util.TimerTask;
  */
 public class GameActivity extends Activity {
 
-    private TextView tipTextView, farmDaysTextView, farmMoneyTextView;
+    private TextView farmTipsTextView, farmDaysTextView, farmMoneyTextView;
     private ListView farmListView;
     private ArrayList<Chicken> chickens;
     private ArrayList<Egg> eggs;
@@ -50,14 +51,16 @@ public class GameActivity extends Activity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private AlertDialog.Builder builder;
+    private int[] eggFlag;
+    private ComputerThread computerThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.farm);
 
-        tipTextView = (TextView) findViewById(R.id.farm_tips_textview);
-        tipTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
+        farmTipsTextView = (TextView) findViewById(R.id.farm_tips_textview);
+        farmTipsTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         farmDaysTextView = (TextView) findViewById(R.id.farm_days_textview);
         farmMoneyTextView = (TextView) findViewById(R.id.farm_money_textview);
@@ -67,9 +70,11 @@ public class GameActivity extends Activity {
         chickens = new ArrayList<>();
         eggs = new ArrayList<>();
 
+        computerThread = new ComputerThread();
+        computerThread.start();
+
         chickens = new ArrayList<Chicken>();
         //initChickenData();
-
 
         //天数,金钱读档or初始化
         sharedPreferences = getSharedPreferences("Testdata", MODE_PRIVATE);
@@ -156,10 +161,10 @@ public class GameActivity extends Activity {
 
                 Toast.makeText(GameActivity.this, "position: " + position, Toast.LENGTH_SHORT).show();
                 if(position < eggs.size()) {
-                    showEggDia();
+                    showEggDia(position);
                 }
                 else{
-                    
+
                 }
 
             }
@@ -218,6 +223,8 @@ public class GameActivity extends Activity {
                         farmDaysTextView.setText("天数：" + days);
                         editor.putInt("FarmTime", days);
                         editor.commit();
+                        //refleshTips("");
+                        showListView();
                         break;
                     default:
                         break;
@@ -230,9 +237,9 @@ public class GameActivity extends Activity {
             @Override
             public void run() {
                 Message message = new Message();
-                message.what = 0x001;
+                message.what = 0x101;
                 //message.obj = System.currentTimeMillis();
-                farmTimeHandler.sendMessage(message);
+                computerThread.myHandler.sendMessage(message);
             }
         };
 
@@ -252,6 +259,10 @@ public class GameActivity extends Activity {
     private void initChickenData1(int level) {
         Egg eg = new Egg(level);
         eggs.add(eg);
+    }
+
+    private void refleshTips(String s) {
+        farmTipsTextView.append("\n" + s);
     }
 
 
@@ -323,7 +334,7 @@ public class GameActivity extends Activity {
         return p;
     }
 
-    private void showEggDia() {
+    private void showEggDia(final int postion) {
 
         builder = new AlertDialog.Builder(this);
         builder.setIcon(R.drawable.eggs);
@@ -333,7 +344,17 @@ public class GameActivity extends Activity {
         builder.setItems(Items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getApplicationContext(), "You clicked "+Items[i], Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "You clicked "+Items[i], Toast.LENGTH_SHORT).show();
+                switch (i) {
+                    case 0:
+                        eggs.get(postion).setBorn(true);
+                        break;
+                    case 1:
+                        money = money + eggs.get(postion).getPrice();
+                        eggs.remove(postion);
+                        showFarmMoneyText();
+                        showListView();
+                }
             }
         });
 
@@ -343,5 +364,67 @@ public class GameActivity extends Activity {
 
     }
 
+    private void showFarmMoneyText() {
+        farmMoneyTextView.setText("金币：" + money);
+        //editor.putInt("FarmMoney", money);
+        //editor.commit();
+    }
+
+    private void showListView() {
+        List<Map<String, Object>> listItems = new ArrayList<Map<String, Object>>();
+        for(int i = 0; i < eggs.size(); i++) {
+            Map<String, Object> listItem = new HashMap<String, Object>();
+            listItem.put("name", eggs.get(i).getName());
+            listItem.put("detail", "" + eggs.get(i).getLevel());
+            listItems.add(listItem);
+        }
+
+        for(int i = 0; i < chickens.size(); i++) {
+            Map<String, Object> listItem = new HashMap<String, Object>();
+            listItem.put("name", chickens.get(i).getName());
+            listItem.put("detail", "" + chickens.get(i).getLevel());
+            listItems.add(listItem);
+        }
+
+
+        SimpleAdapter simpleAdapter = new SimpleAdapter(this,
+                listItems,
+                R.layout.farm_list_item,
+                new String[] {"name", "detail"},
+                new int[] {R.id.farm_chicken_name, R.id.farm_chicken_tips});
+
+        farmListView.setAdapter(simpleAdapter);
+    }
+
+    class ComputerThread extends Thread {
+        public Handler myHandler;
+
+        public void run() {
+            Looper.prepare();
+            myHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+
+                    if (msg.what == 0x101) {
+                        //textView.setText(msg.getData().getString("data"));
+                        //Toast.makeText(WorkActivity.this, "Temperature get success!", Toast.LENGTH_SHORT).show();
+                        for(int i = 0; i < eggs.size(); i++) {
+                            if(eggs.get(i).isBorn() == true) {
+                                if(eggs.get(i).decBornTime()) {
+                                    chickens.add(eggs.get(i).born());
+                                    eggs.remove(i);
+                                }
+                            }
+                        }
+                    }
+                    Message message = new Message();
+                    message.what = 0x001;
+                    farmTimeHandler.sendMessage(message);
+                }
+            };
+            Looper.loop();
+        }
+    }//0x124
 
 }
