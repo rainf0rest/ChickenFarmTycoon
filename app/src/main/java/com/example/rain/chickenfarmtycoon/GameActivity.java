@@ -1,7 +1,9 @@
 package com.example.rain.chickenfarmtycoon;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,6 +49,7 @@ public class GameActivity extends Activity {
     private int days, money, firstPlay;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,9 +155,17 @@ public class GameActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Toast.makeText(GameActivity.this, "position: " + position, Toast.LENGTH_SHORT).show();
+                if(position < eggs.size()) {
+                    showEggDia();
+                }
+                else{
+                    
+                }
 
             }
         });
+
+
 
 
         /*
@@ -310,6 +321,26 @@ public class GameActivity extends Activity {
         objectInputStream.close();
         byteArrayInputStream.close();
         return p;
+    }
+
+    private void showEggDia() {
+
+        builder = new AlertDialog.Builder(this);
+        builder.setIcon(R.drawable.eggs);
+        builder.setTitle(R.string.operate);
+
+        final String[] Items={"孵化","出售"};
+        builder.setItems(Items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(), "You clicked "+Items[i], Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setCancelable(true);
+        AlertDialog dialog=builder.create();
+        dialog.show();
+
     }
 
 
