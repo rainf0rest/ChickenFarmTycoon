@@ -9,4 +9,5 @@
     <dimen name="diver">3dp</dimen>
     <dimen name="name_text_size">30dp</dimen>
     <dimen name="name_text_tips_size">20dp</dimen>
+    <dimen name="item_statu_size">15dp</dimen>
 </resources>

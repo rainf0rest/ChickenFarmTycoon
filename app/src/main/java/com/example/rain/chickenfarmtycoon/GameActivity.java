@@ -130,30 +130,7 @@ public class GameActivity extends Activity {
         }
 
 
-
-        List<Map<String, Object>> listItems = new ArrayList<Map<String, Object>>();
-        for(int i = 0; i < eggs.size(); i++) {
-            Map<String, Object> listItem = new HashMap<String, Object>();
-            listItem.put("name", eggs.get(i).getName());
-            listItem.put("detail", "" + eggs.get(i).getLevel());
-            listItems.add(listItem);
-        }
-
-        for(int i = 0; i < chickens.size(); i++) {
-            Map<String, Object> listItem = new HashMap<String, Object>();
-            listItem.put("name", chickens.get(i).getName());
-            listItem.put("detail", "" + chickens.get(i).getLevel());
-            listItems.add(listItem);
-        }
-
-
-        SimpleAdapter simpleAdapter = new SimpleAdapter(this,
-                listItems,
-                R.layout.farm_list_item,
-                new String[] {"name", "detail"},
-                new int[] {R.id.farm_chicken_name, R.id.farm_chicken_tips});
-
-        farmListView.setAdapter(simpleAdapter);
+        showListView();
 
         farmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -376,6 +353,7 @@ public class GameActivity extends Activity {
             Map<String, Object> listItem = new HashMap<String, Object>();
             listItem.put("name", eggs.get(i).getName());
             listItem.put("detail", "" + eggs.get(i).getLevel());
+            listItem.put("status", "孵化：" + eggs.get(i).getBornTime() + "/" + eggs.get(i).getBornTimeTop());
             listItems.add(listItem);
         }
 
@@ -383,6 +361,7 @@ public class GameActivity extends Activity {
             Map<String, Object> listItem = new HashMap<String, Object>();
             listItem.put("name", chickens.get(i).getName());
             listItem.put("detail", "" + chickens.get(i).getLevel());
+            listItem.put("status", "null");
             listItems.add(listItem);
         }
 
@@ -390,8 +369,8 @@ public class GameActivity extends Activity {
         SimpleAdapter simpleAdapter = new SimpleAdapter(this,
                 listItems,
                 R.layout.farm_list_item,
-                new String[] {"name", "detail"},
-                new int[] {R.id.farm_chicken_name, R.id.farm_chicken_tips});
+                new String[] {"name", "detail", "status"},
+                new int[] {R.id.farm_chicken_name, R.id.farm_chicken_tips, R.id.farm_chicken_status});
 
         farmListView.setAdapter(simpleAdapter);
     }

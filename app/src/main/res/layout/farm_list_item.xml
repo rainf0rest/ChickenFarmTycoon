@@ -23,5 +23,16 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/status"
+        android:textSize="@dimen/item_statu_size"
+        android:id="@+id/farm_chicken_status"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/farm_chicken_name"
+        android:layout_alignBottom="@+id/farm_chicken_tips" />
+
 
 </RelativeLayout>

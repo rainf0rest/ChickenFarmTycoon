@@ -4,4 +4,5 @@
     <string name="money">金币：</string>
     <string name="day">天数：</string>
     <string name="operate">操作</string>
+    <string name="status">状态：</string>
 </resources>

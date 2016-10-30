@@ -12,7 +12,7 @@ public class Egg implements Serializable {
 
     private int level;
 
-    private int bornTime;
+    private int bornTime, bornTimeTop;
     private boolean born;
 
     private int price;
@@ -21,6 +21,7 @@ public class Egg implements Serializable {
         name = "蛋";
         this.level = level;
         bornTime = 10* level;
+        bornTimeTop = bornTime;
         price = 1* level;
         born = false;
     }
@@ -78,5 +79,13 @@ public class Egg implements Serializable {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public int getBornTimeTop() {
+        return bornTimeTop;
+    }
+
+    public void setBornTimeTop(int bornTimeTop) {
+        this.bornTimeTop = bornTimeTop;
     }
 }
