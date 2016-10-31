@@ -70,6 +70,8 @@ public class Egg implements Serializable {
 
     public Chicken born() {
         Chicken newChciken = new Chicken(level);
+        RandomHelper randomHelper = new RandomHelper();
+        newChciken.setWeight(50 + randomHelper.makeRandom(1, 5)*5);
         return newChciken;
     }
 

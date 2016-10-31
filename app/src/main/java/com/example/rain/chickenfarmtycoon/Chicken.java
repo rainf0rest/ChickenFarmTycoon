@@ -10,7 +10,7 @@ public class Chicken implements Serializable{
     private int level;
     private int weight;
     private boolean hen;
-    private int price;
+    private double price;
 
     public Chicken(int level) {
         RandomHelper randomHelper = new RandomHelper();
@@ -61,11 +61,16 @@ public class Chicken implements Serializable{
         this.hen = hen;
     }
 
-    public int getPrice() {
+    public double getPrice() {
+        price = 0.03*weight;
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
+    }
+
+    public void growWeight() {
+        weight = weight + 15*level;
     }
 }

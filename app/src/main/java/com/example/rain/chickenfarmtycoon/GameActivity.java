@@ -47,7 +47,8 @@ public class GameActivity extends Activity {
     private Handler farmTimeHandler;
     private Timer timer;
     private TimerTask task;
-    private int days, money, firstPlay;
+    private int days, firstPlay;
+    private double money;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private AlertDialog.Builder builder;
@@ -141,7 +142,7 @@ public class GameActivity extends Activity {
                     showEggDia(position);
                 }
                 else{
-
+                    showChickenDia(position);
                 }
 
             }
@@ -338,7 +339,43 @@ public class GameActivity extends Activity {
         builder.setCancelable(true);
         AlertDialog dialog=builder.create();
         dialog.show();
+    }
 
+    private void showChickenDia(final int postion) {
+
+        builder = new AlertDialog.Builder(this);
+        builder.setIcon(R.drawable.chickens);
+        builder.setTitle(R.string.operate);
+
+        final String[] Items={"育种","出售"};
+        builder.setItems(Items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //Toast.makeText(getApplicationContext(), "You clicked "+Items[i], Toast.LENGTH_SHORT).show();
+                switch (i) {
+                    case 0:
+                        //eggs.get(postion).setBorn(true);
+                        break;
+                    case 1:
+                        int p;
+                        if(eggs.isEmpty()) {
+                            p = postion;
+                        }
+                        else{
+                            p = postion - eggs.size();
+                        }
+
+                        money = money + chickens.get(p).getPrice();
+                        chickens.remove(p);
+                        showFarmMoneyText();
+                        showListView();
+                }
+            }
+        });
+
+        builder.setCancelable(true);
+        AlertDialog dialog=builder.create();
+        dialog.show();
     }
 
     private void showFarmMoneyText() {
@@ -353,7 +390,7 @@ public class GameActivity extends Activity {
             Map<String, Object> listItem = new HashMap<String, Object>();
             listItem.put("name", eggs.get(i).getName());
             listItem.put("detail", "" + eggs.get(i).getLevel());
-            listItem.put("status", "孵化：" + eggs.get(i).getBornTime() + "/" + eggs.get(i).getBornTimeTop());
+            listItem.put("status", "孵化：" + eggs.get(i).getBornTime() + "天 / " + eggs.get(i).getBornTimeTop() + "天");
             listItems.add(listItem);
         }
 
@@ -361,7 +398,7 @@ public class GameActivity extends Activity {
             Map<String, Object> listItem = new HashMap<String, Object>();
             listItem.put("name", chickens.get(i).getName());
             listItem.put("detail", "" + chickens.get(i).getLevel());
-            listItem.put("status", "null");
+            listItem.put("status", "体重：" + chickens.get(i).getWeight() + "g\n价格：" + chickens.get(i).getPrice() + " 金币");
             listItems.add(listItem);
         }
 
@@ -384,7 +421,6 @@ public class GameActivity extends Activity {
                 @Override
                 public void handleMessage(Message msg) {
                     super.handleMessage(msg);
-
                     if (msg.what == 0x101) {
                         //textView.setText(msg.getData().getString("data"));
                         //Toast.makeText(WorkActivity.this, "Temperature get success!", Toast.LENGTH_SHORT).show();
@@ -393,8 +429,12 @@ public class GameActivity extends Activity {
                                 if(eggs.get(i).decBornTime()) {
                                     chickens.add(eggs.get(i).born());
                                     eggs.remove(i);
+                                    i--;
                                 }
                             }
+                        }
+                        for(int i = 0; i < chickens.size(); i++) {
+                            chickens.get(i).growWeight();
                         }
                     }
                     Message message = new Message();
