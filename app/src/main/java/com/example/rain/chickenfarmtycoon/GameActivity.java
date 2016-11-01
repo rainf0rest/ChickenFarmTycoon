@@ -137,7 +137,7 @@ public class GameActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Toast.makeText(GameActivity.this, "position: " + position, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(GameActivity.this, "position: " + position, Toast.LENGTH_SHORT).show();
                 if(position < eggs.size()) {
                     showEggDia(position);
                 }
@@ -364,11 +364,14 @@ public class GameActivity extends Activity {
                         else{
                             p = postion - eggs.size();
                         }
-
+                        Toast.makeText(GameActivity.this, "p:" + p + "\nPostion: " + postion + "eggsSize: " + eggs.size(), Toast.LENGTH_LONG).show();
+                        /*
                         money = money + chickens.get(p).getPrice();
                         chickens.remove(p);
                         showFarmMoneyText();
                         showListView();
+                        */
+                        break;
                 }
             }
         });
