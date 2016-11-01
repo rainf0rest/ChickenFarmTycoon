@@ -142,7 +142,9 @@ public class GameActivity extends Activity {
                     showEggDia(position);
                 }
                 else{
-                    showChickenDia(position);
+                    if(chickens.size() != 0) {
+                        showChickenDia(position);
+                    }
                 }
 
             }
@@ -357,20 +359,15 @@ public class GameActivity extends Activity {
                         //eggs.get(postion).setBorn(true);
                         break;
                     case 1:
-                        int p;
-                        if(eggs.isEmpty()) {
-                            p = postion;
-                        }
-                        else{
-                            p = postion - eggs.size();
-                        }
-                        Toast.makeText(GameActivity.this, "p:" + p + "\nPostion: " + postion + "eggsSize: " + eggs.size(), Toast.LENGTH_LONG).show();
-                        /*
+                        int p = 0;
+                        p = postion - eggs.size();
+                        Toast.makeText(GameActivity.this, "p:" + p + "\nPostion: " + postion + "\neggsSize: " + eggs.size() + "\nchickensSize" + chickens.size(), Toast.LENGTH_LONG).show();
                         money = money + chickens.get(p).getPrice();
                         chickens.remove(p);
                         showFarmMoneyText();
                         showListView();
-                        */
+
+
                         break;
                 }
             }
@@ -404,15 +401,20 @@ public class GameActivity extends Activity {
             listItem.put("status", "体重：" + chickens.get(i).getWeight() + "g\n价格：" + chickens.get(i).getPrice() + " 金币");
             listItems.add(listItem);
         }
+        if(eggs.size() == 0 && chickens.size() == 0) {
+            farmListView.setAdapter(null);
 
+        }
+        else {
+            SimpleAdapter simpleAdapter = new SimpleAdapter(this,
+                    listItems,
+                    R.layout.farm_list_item,
+                    new String[] {"name", "detail", "status"},
+                    new int[] {R.id.farm_chicken_name, R.id.farm_chicken_tips, R.id.farm_chicken_status});
 
-        SimpleAdapter simpleAdapter = new SimpleAdapter(this,
-                listItems,
-                R.layout.farm_list_item,
-                new String[] {"name", "detail", "status"},
-                new int[] {R.id.farm_chicken_name, R.id.farm_chicken_tips, R.id.farm_chicken_status});
+            farmListView.setAdapter(simpleAdapter);
+        }
 
-        farmListView.setAdapter(simpleAdapter);
     }
 
     class ComputerThread extends Thread {
